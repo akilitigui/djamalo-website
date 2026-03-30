@@ -1,164 +1,1468 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Djamalo - Innovation Numérique Panafricaine</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DJAMALO — Plateforme Panafricaine, Core ERP, IA First</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   FOUNDATIONS
+═══════════════════════════════════════════════════════════ */
+:root {
+  --gold:      #C9A84C;
+  --gold-lt:   #E8C96A;
+  --gold-dk:   #9A7A2A;
+  --navy:      #06090F;
+  --navy-2:    #0C1422;
+  --navy-3:    #111C30;
+  --ivory:     #F5EDD8;
+  --ivory-dk:  #DDD0B3;
+  --text:      rgba(245,237,216,0.88);
+  --text-dim:  rgba(245,237,216,0.42);
+  --text-faint:rgba(245,237,216,0.18);
+  --line:      rgba(201,168,76,0.15);
+  --radius:    4px;
+  --fw-display: 'Cormorant Garamond', Georgia, serif;
+  --fw-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: var(--fw-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+::selection { background: rgba(201,168,76,.3); color: #fff; }
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold); pointer-events: none; z-index: 99999;
+  transition: transform 0.1s, opacity 0.2s;
+  transform: translate(-50%, -50%);
+}
+#cursor-ring {
+  position: fixed; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,.5); pointer-events: none; z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s cubic-bezier(0.17,0.67,0.83,0.67), width 0.3s, height 0.3s, border-color 0.3s;
+}
+body:hover #cursor { opacity: 1; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--gold-dk); }
+
+/* ── GEOMETRY ── */
+.kente {
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(201,168,76,.04) 20px, rgba(201,168,76,.04) 21px),
+    repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(201,168,76,.04) 20px, rgba(201,168,76,.04) 21px);
+}
+.adinkra-bg {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(201,168,76,0.06)' stroke-width='1'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3Ccircle cx='30' cy='30' r='10'/%3E%3Cline x1='30' y1='10' x2='30' y2='50'/%3E%3Cline x1='10' y1='30' x2='50' y2='30'/%3E%3C/g%3E%3C/svg%3E");
+}
+.noise-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: .6;
+}
+
+/* ── UTILS ── */
+.gold { color: var(--gold); }
+.serif { font-family: var(--fw-display); }
+.reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(40px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px;
+  transition: background .4s, border-color .4s, backdrop-filter .4s;
+  border-bottom: 1px solid transparent;
+}
+#nav.scrolled {
+  background: rgba(6,9,15,.88);
+  backdrop-filter: blur(24px) saturate(150%);
+  border-bottom-color: var(--line);
+}
+.nav-logo {
+  font-family: var(--fw-display); font-size: 26px; font-weight: 700;
+  letter-spacing: 2px; text-decoration: none; color: var(--ivory);
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-logo-dot { color: var(--gold); font-size: 34px; line-height: 0; margin-bottom: -2px; }
+.nav-links { display: flex; gap: 36px; align-items: center; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--text-dim); text-decoration: none;
+  letter-spacing: .5px; transition: color .2s;
+}
+.nav-links a:hover { color: var(--ivory); }
+.nav-cta {
+  padding: 10px 24px;
+  border: 1px solid rgba(201,168,76,.4); color: var(--gold);
+  font-size: 13px; font-weight: 700; letter-spacing: 1px; text-decoration: none;
+  text-transform: uppercase; transition: all .25s;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.nav-cta:hover { background: var(--gold); color: var(--navy); }
+.nav-burger { display: none; flex-direction: column; gap: 5px; cursor: none; }
+.nav-burger span { width: 24px; height: 1.5px; background: var(--ivory); display: block; transition: all .3s; }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO SLIDESHOW
+═══════════════════════════════════════════════════════════ */
+#hero {
+  position: relative; height: 100dvh; min-height: 640px;
+  overflow: hidden;
+}
+.slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  padding: 0 48px; padding-top: 72px;
+  opacity: 0; transition: opacity 1.2s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+}
+.slide.active { opacity: 1; pointer-events: all; }
+
+/* Slide backgrounds — cinematic African city visuals via CSS */
+.slide-bg {
+  position: absolute; inset: 0; z-index: 0;
+  transition: transform 8s ease-out;
+}
+.slide.active .slide-bg { transform: scale(1.04); }
+.slide-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(110deg, rgba(6,9,15,.92) 40%, rgba(6,9,15,.5) 100%);
+}
+/* S1 — Abidjan skyline feel */
+.s1-bg {
+  background:
+    radial-gradient(ellipse 50% 60% at 85% 45%, rgba(201,168,76,.15) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 70% 80%, rgba(0,120,160,.12) 0%, transparent 60%),
+    linear-gradient(160deg, #050A18 0%, #0C1E3A 50%, #081428 100%);
+}
+/* S2 — Fintech / mobile banking */
+.s2-bg {
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgba(0,180,200,.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 20% 70%, rgba(201,168,76,.08) 0%, transparent 60%),
+    linear-gradient(160deg, #04080E 0%, #081628 50%, #04090F 100%);
+}
+/* S3 — AgroTech / Agropole CI */
+.s3-bg {
+  background:
+    radial-gradient(ellipse 50% 50% at 75% 50%, rgba(30,120,60,.15) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 30% 30%, rgba(201,168,76,.08) 0%, transparent 60%),
+    linear-gradient(160deg, #050B08 0%, #0A1A0E 50%, #04090A 100%);
+}
+/* S4 — Mode / Cosmétique */
+.s4-bg {
+  background:
+    radial-gradient(ellipse 50% 60% at 80% 40%, rgba(120,40,100,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 70%, rgba(201,168,76,.1) 0%, transparent 60%),
+    linear-gradient(160deg, #080410 0%, #160B22 50%, #080410 100%);
+}
+/* S5 — Langues Africaines */
+.s5-bg {
+  background:
+    radial-gradient(ellipse 70% 60% at 70% 40%, rgba(180,100,0,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 25% 60%, rgba(201,168,76,.1) 0%, transparent 50%),
+    linear-gradient(160deg, #0A0800 0%, #1A1000 50%, #0A0800 100%);
+}
+
+/* Decorative city silhouette */
+.city-silhouette {
+  position: absolute; bottom: 0; right: 0; z-index: 1;
+  width: 55%; height: 70%;
+  opacity: .22;
+}
+
+.slide-content { position: relative; z-index: 2; max-width: 780px; }
+.slide-tag {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; letter-spacing: 3px; font-weight: 700;
+  color: var(--gold); text-transform: uppercase; margin-bottom: 28px;
+}
+.slide-tag::before {
+  content: ''; width: 32px; height: 1px; background: var(--gold);
+}
+.slide-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: blink 1.6s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+
+.slide-title {
+  font-family: var(--fw-display);
+  font-size: clamp(44px, 6vw, 90px);
+  line-height: 1.0;
+  font-weight: 300;
+  color: var(--ivory);
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+.slide-title strong { font-weight: 700; color: #fff; }
+.slide-title .gold-word {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.slide-sub {
+  font-size: 16px; color: var(--text-dim); line-height: 1.8;
+  max-width: 540px; margin-bottom: 44px;
+  font-weight: 400;
+}
+.slide-sub b { color: var(--text); font-weight: 600; }
+
+.slide-cta-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 36px; background: var(--gold);
+  color: var(--navy); font-size: 13px; font-weight: 800;
+  letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+  transition: background .2s, transform .2s;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+.btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+  text-decoration: none; letter-spacing: .5px;
+  transition: color .2s;
+}
+.btn-ghost:hover { color: var(--ivory); }
+.btn-ghost svg { transition: transform .2s; }
+.btn-ghost:hover svg { transform: translateX(4px); }
+
+/* Slide progress */
+#hero-progress {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+  display: flex; gap: 6px; padding: 0 48px 48px;
+}
+.prog-item {
+  flex: 1; height: 2px; background: rgba(255,255,255,.12); cursor: none; position: relative; overflow: hidden;
+}
+.prog-item::after {
+  content: ''; position: absolute; top: 0; left: 0; height: 100%;
+  background: var(--gold); width: 0;
+  transition: none;
+}
+.prog-item.active::after { animation: progress-fill var(--dur, 6s) linear forwards; }
+@keyframes progress-fill { from { width: 0 } to { width: 100% } }
+.prog-label {
+  position: absolute; bottom: 60px; transform: translateX(-50%);
+  font-size: 10px; letter-spacing: 2px; color: var(--text-faint);
+  white-space: nowrap; font-weight: 600;
+}
+
+/* Slide decorative numbers */
+.slide-num {
+  position: absolute; bottom: 80px; right: 48px; z-index: 5;
+  font-family: var(--fw-display); font-size: 120px; font-weight: 700;
+  color: rgba(201,168,76,.06); line-height: 1; pointer-events: none;
+  letter-spacing: -4px;
+}
+
+/* African kente border at top */
+.kente-border {
+  position: absolute; top: 72px; left: 0; right: 0; height: 3px; z-index: 5;
+  background: repeating-linear-gradient(90deg,
+    var(--gold) 0px, var(--gold) 20px,
+    var(--navy) 20px, var(--navy) 24px,
+    #8B4513 24px, #8B4513 44px,
+    var(--navy) 44px, var(--navy) 48px,
+    var(--gold) 48px, var(--gold) 68px
+  );
+  opacity: .6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION DEFAULTS
+═══════════════════════════════════════════════════════════ */
+.section { padding: 120px 48px; position: relative; overflow: hidden; }
+.section-inner { max-width: 1280px; margin: 0 auto; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 11px; letter-spacing: 3px; font-weight: 700;
+  color: var(--gold); text-transform: uppercase; margin-bottom: 20px;
+}
+.section-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+.section-title {
+  font-family: var(--fw-display);
+  font-size: clamp(38px, 5vw, 72px);
+  font-weight: 300; line-height: 1.05; letter-spacing: -1px;
+  color: var(--ivory);
+}
+.section-title strong { font-weight: 700; }
+.section-title em { font-style: italic; color: var(--gold); }
+.section-body {
+  font-size: 16px; color: var(--text-dim); line-height: 1.85;
+  max-width: 640px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MARQUEE
+═══════════════════════════════════════════════════════════ */
+#marquee-bar {
+  background: var(--gold); padding: 14px 0; overflow: hidden;
+  border-top: 1px solid var(--navy-2); border-bottom: 1px solid var(--navy-2);
+}
+.marquee-track {
+  display: flex; gap: 0; width: max-content;
+  animation: marquee 28s linear infinite;
+}
+@keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+.marquee-item {
+  display: flex; align-items: center; gap: 20px; padding: 0 32px;
+  font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--navy); white-space: nowrap;
+}
+.marquee-sep { width: 4px; height: 4px; border-radius: 50%; background: rgba(6,9,15,.35); }
+
+/* ═══════════════════════════════════════════════════════════
+   MANIFESTE
+═══════════════════════════════════════════════════════════ */
+#manifeste {
+  background: var(--navy-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.manifeste-text {
+  font-family: var(--fw-display);
+  font-size: clamp(28px, 4vw, 52px);
+  line-height: 1.3; font-weight: 300;
+  color: var(--text);
+  max-width: 980px;
+}
+.manifeste-text strong { color: var(--ivory); font-weight: 700; }
+.manifeste-text .gold-italic { color: var(--gold); font-style: italic; }
+.manifeste-meta {
+  margin-top: 64px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--line);
+  border: 1px solid var(--line);
+}
+.meta-cell {
+  padding: 36px 28px; background: var(--navy-2);
+  transition: background .3s;
+}
+.meta-cell:hover { background: var(--navy-3); }
+.meta-num {
+  font-family: var(--fw-display); font-size: 52px; font-weight: 700;
+  color: var(--gold); letter-spacing: -2px; line-height: 1;
+}
+.meta-num sup { font-size: 24px; }
+.meta-label { font-size: 12px; color: var(--text-dim); margin-top: 8px; letter-spacing: .5px; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════════════
+   DOMAINES DJAMALO
+═══════════════════════════════════════════════════════════ */
+#domaines { background: var(--navy); }
+.domaines-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2px; background: var(--line);
+  border: 1px solid var(--line);
+  margin-top: 60px;
+}
+.domaine-card {
+  position: relative; padding: 56px 48px;
+  background: var(--navy-2); overflow: hidden;
+  transition: background .35s;
+  cursor: none;
+}
+.domaine-card:hover { background: #0E1830; }
+.domaine-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--gold); transform: scaleX(0); transform-origin: left;
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+}
+.domaine-card:hover::before { transform: scaleX(1); }
+.domaine-num {
+  font-family: var(--fw-display); font-size: 80px; font-weight: 700;
+  color: var(--text-faint); line-height: 1; margin-bottom: 24px;
+  transition: color .3s;
+}
+.domaine-card:hover .domaine-num { color: rgba(201,168,76,.12); }
+.domaine-icon { font-size: 40px; margin-bottom: 20px; }
+.domaine-name {
+  font-family: var(--fw-display); font-size: 32px; font-weight: 600;
+  color: var(--ivory); margin-bottom: 12px; letter-spacing: -.5px;
+}
+.domaine-status {
+  display: inline-block; padding: 4px 14px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 20px;
+}
+.status-live { background: rgba(20,160,80,.15); color: #3DD68C; border: 1px solid rgba(20,160,80,.25); }
+.status-q3   { background: rgba(201,168,76,.1); color: var(--gold); border: 1px solid rgba(201,168,76,.2); }
+.status-q4   { background: rgba(180,80,180,.1); color: #D49FD4; border: 1px solid rgba(180,80,180,.2); }
+.status-2027 { background: rgba(255,255,255,.06); color: var(--text-dim); border: 1px solid var(--text-faint); }
+.domaine-desc { font-size: 15px; color: var(--text-dim); line-height: 1.75; max-width: 380px; }
+.domaine-arrow {
+  position: absolute; bottom: 48px; right: 48px;
+  width: 48px; height: 48px; border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-faint); font-size: 20px;
+  transition: all .3s; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.domaine-card:hover .domaine-arrow { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════
+   WAHID SPOTLIGHT
+═══════════════════════════════════════════════════════════ */
+#wahid {
+  background: linear-gradient(160deg, var(--navy-3), #050D20, var(--navy-3));
+  border-top: 1px solid var(--line);
+}
+.wahid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.wahid-features { margin-top: 40px; display: flex; flex-direction: column; gap: 0; }
+.feat-row {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 24px 0; border-bottom: 1px solid var(--line);
+}
+.feat-row:last-child { border-bottom: none; }
+.feat-icon-box {
+  width: 44px; height: 44px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); font-size: 20px;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  background: rgba(201,168,76,.06);
+}
+.feat-row h4 { font-size: 15px; font-weight: 700; color: var(--ivory); margin-bottom: 5px; }
+.feat-row p  { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.wahid-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: rgba(61,214,140,.08);
+  border: 1px solid rgba(61,214,140,.2);
+  font-size: 12px; color: #3DD68C; font-weight: 700;
+  letter-spacing: 1px; margin-bottom: 28px;
+}
+.wahid-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #3DD68C; animation: blink 1.6s infinite; }
+
+/* Phone mockup — ultra premium */
+.phone-wrap {
+  display: flex; justify-content: center; position: relative;
+}
+.phone-glow {
+  position: absolute; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(201,168,76,.12) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.phone {
+  width: 280px; position: relative; z-index: 2;
+  background: linear-gradient(145deg, #1C2238, #0E1422);
+  border-radius: 44px; padding: 14px;
+  box-shadow:
+    0 60px 120px rgba(0,0,0,.8),
+    0 0 0 1px rgba(255,255,255,.07),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.phone-screen {
+  background: #040812; border-radius: 32px; overflow: hidden;
+  min-height: 520px; position: relative;
+}
+.phone-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 80px; height: 28px; background: #040812; border-radius: 0 0 16px 16px; z-index: 5;
+}
+.phone-status { display: flex; justify-content: space-between; padding: 36px 16px 0; }
+.phone-time { font-size: 12px; font-weight: 700; color: var(--ivory); }
+.phone-icons { font-size: 12px; color: var(--text-dim); }
+
+.app-header-bar {
+  padding: 16px 16px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.app-name { font-size: 13px; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+.app-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--navy); }
+
+.app-search {
+  margin: 0 16px 16px;
+  background: rgba(255,255,255,.05); border-radius: 12px;
+  padding: 12px 14px; display: flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(255,255,255,.07);
+}
+.app-search span { font-size: 12px; color: rgba(255,255,255,.3); }
+
+.app-scroll { padding: 0 12px; display: flex; flex-direction: column; gap: 10px; }
+.trip-tile {
+  background: rgba(255,255,255,.04); border-radius: 14px; padding: 14px;
+  border: 1px solid rgba(201,168,76,.1);
+  transition: border-color .2s;
+}
+.trip-tile:first-child { border-color: rgba(201,168,76,.3); }
+.trip-row1 { display: flex; justify-content: space-between; align-items: center; }
+.trip-company { font-size: 11px; font-weight: 800; color: var(--ivory); }
+.trip-price { font-size: 14px; font-weight: 800; color: var(--gold); }
+.trip-row2 { margin-top: 8px; display: flex; justify-content: space-between; }
+.trip-route { font-size: 11px; color: rgba(255,255,255,.45); }
+.trip-stars { font-size: 11px; color: var(--gold); }
+.cert-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  background: rgba(201,168,76,.15); font-size: 9px; color: var(--gold); font-weight: 700;
+}
+
+.pay-row {
+  margin: 12px 12px 0; padding: 12px 14px;
+  background: rgba(61,214,140,.06); border-radius: 12px;
+  border: 1px solid rgba(61,214,140,.15);
+  display: flex; align-items: center; gap: 10px;
+}
+.pay-check { font-size: 14px; }
+.pay-text { font-size: 11px; color: #3DD68C; font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════════════
+   CI / VISION SECTION — PARALLAX
+═══════════════════════════════════════════════════════════ */
+#vision-ci {
+  position: relative; overflow: hidden;
+  background: var(--navy-2);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+#vision-parallax {
+  position: absolute; inset: -20%; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 30%, rgba(0,120,60,.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 20% 70%, rgba(201,168,76,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,80,160,.08) 0%, transparent 70%);
+  will-change: transform;
+}
+.vision-layout {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+}
+.ci-cards { display: flex; flex-direction: column; gap: 16px; margin-top: 40px; }
+.ci-card {
+  padding: 24px; border: 1px solid var(--line);
+  background: rgba(6,9,15,.6); backdrop-filter: blur(8px);
+  display: flex; gap: 16px; align-items: flex-start;
+  transition: border-color .3s, background .3s;
+}
+.ci-card:hover { border-color: rgba(201,168,76,.3); background: rgba(12,20,34,.7); }
+.ci-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+.ci-title { font-size: 15px; font-weight: 700; color: var(--ivory); margin-bottom: 4px; }
+.ci-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.ci-tag { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--gold); text-transform: uppercase; margin-top: 8px; }
+
+.vision-right .section-body { margin-top: 24px; }
+.ci-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+.ci-stat-box {
+  padding: 24px; border: 1px solid var(--line); background: rgba(6,9,15,.4);
+}
+.ci-stat-n { font-family: var(--fw-display); font-size: 36px; font-weight: 700; color: var(--gold); }
+.ci-stat-l { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* ═══════════════════════════════════════════════════════════
+   FINTECH ARCHITECTURE
+═══════════════════════════════════════════════════════════ */
+#fintech { background: var(--navy); }
+.arch-diagram {
+  margin-top: 64px; border: 1px solid var(--line);
+  overflow: hidden;
+}
+.arch-row {
+  display: grid; gap: 1px; background: var(--line);
+}
+.arch-row-2 { grid-template-columns: 1fr 1fr; }
+.arch-row-4 { grid-template-columns: repeat(4, 1fr); }
+.arch-row-5 { grid-template-columns: repeat(5, 1fr); }
+.arch-cell {
+  padding: 28px 24px; background: var(--navy-2);
+  text-align: center; transition: background .3s;
+}
+.arch-cell:hover { background: var(--navy-3); }
+.arch-layer-label {
+  padding: 14px 24px; background: var(--navy-3);
+  font-size: 10px; letter-spacing: 3px; font-weight: 700;
+  color: var(--gold); text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.arch-layer-label::before, .arch-layer-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.arch-icon { font-size: 24px; margin-bottom: 10px; }
+.arch-name { font-size: 13px; font-weight: 700; color: var(--ivory); margin-bottom: 4px; }
+.arch-desc { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+.arch-gold { border-top: 2px solid var(--gold) !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   STACK TECH
+═══════════════════════════════════════════════════════════ */
+#tech {
+  background: var(--navy-3);
+  border-top: 1px solid var(--line);
+}
+.tech-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 56px; }
+.tech-cell {
+  padding: 32px 20px; background: var(--navy-3); text-align: center;
+  transition: background .3s;
+}
+.tech-cell:hover { background: #111C2E; }
+.tech-emoji { font-size: 32px; margin-bottom: 12px; }
+.tech-name { font-size: 14px; font-weight: 700; color: var(--ivory); margin-bottom: 4px; }
+.tech-role { font-size: 11px; color: var(--text-dim); }
+
+/* ═══════════════════════════════════════════════════════════
+   CTA FINAL
+═══════════════════════════════════════════════════════════ */
+#cta-final {
+  position: relative; padding: 160px 48px;
+  text-align: center; overflow: hidden;
+  background: var(--navy-2);
+  border-top: 1px solid var(--line);
+}
+#cta-final::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 80px; background: linear-gradient(var(--gold), transparent);
+}
+.cta-title {
+  font-family: var(--fw-display);
+  font-size: clamp(40px, 5.5vw, 80px);
+  font-weight: 300; color: var(--ivory); line-height: 1.1; letter-spacing: -1px;
+  margin-bottom: 24px;
+}
+.cta-title em { color: var(--gold); font-style: italic; }
+.cta-title strong { font-weight: 700; }
+.cta-sub { font-size: 16px; color: var(--text-dim); margin-bottom: 56px; max-width: 500px; margin-left: auto; margin-right: auto; }
+.cta-cluster { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.cta-divider {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: repeating-linear-gradient(90deg,
+    var(--gold) 0px, var(--gold) 20px,
+    transparent 20px, transparent 24px,
+    rgba(139,69,19,.6) 24px, rgba(139,69,19,.6) 44px,
+    transparent 44px, transparent 48px
+  );
+  opacity: .7;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+footer {
+  background: #030509; padding: 80px 48px 40px;
+  border-top: 1px solid var(--line);
+}
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px;
+  padding-bottom: 60px; border-bottom: 1px solid var(--line);
+}
+.footer-brand .logo-foot { font-family: var(--fw-display); font-size: 28px; font-weight: 700; color: var(--ivory); letter-spacing: 2px; }
+.footer-brand .logo-foot span { color: var(--gold); }
+.footer-brand p { font-size: 13px; color: var(--text-dim); line-height: 1.7; margin-top: 16px; max-width: 280px; }
+.footer-col h5 { font-size: 12px; letter-spacing: 2px; font-weight: 700; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
+.footer-col a { display: block; font-size: 13px; color: var(--text-dim); text-decoration: none; margin-bottom: 10px; transition: color .2s; }
+.footer-col a:hover { color: var(--ivory); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; flex-wrap: wrap; gap: 16px; }
+.footer-copy { font-size: 12px; color: var(--text-faint); }
+.footer-flag { font-size: 20px; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .nav-links, .nav-cta { display: none; }
+  .nav-burger { display: flex; }
+  #nav { padding: 0 24px; }
+  .section { padding: 80px 24px; }
+  .slide { padding: 0 24px; padding-top: 72px; }
+  #hero-progress { padding: 0 24px 48px; }
+  .slide-num { display: none; }
+  .manifeste-meta { grid-template-columns: 1fr 1fr; }
+  .domaines-grid { grid-template-columns: 1fr; }
+  .wahid-layout { grid-template-columns: 1fr; }
+  .vision-layout { grid-template-columns: 1fr; }
+  .arch-row-4 { grid-template-columns: 1fr 1fr; }
+  .arch-row-5 { grid-template-columns: 1fr 1fr; }
+  .tech-grid { grid-template-columns: 1fr 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .cta-title { font-size: 36px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+  transition: opacity .6s, visibility .6s;
+}
+#loader.done { opacity: 0; visibility: hidden; }
+.loader-logo { font-family: var(--fw-display); font-size: 42px; font-weight: 700; color: var(--ivory); letter-spacing: 3px; }
+.loader-logo span { color: var(--gold); }
+.loader-bar-wrap { width: 120px; height: 2px; background: rgba(201,168,76,.15); }
+.loader-bar { height: 100%; background: var(--gold); width: 0; animation: load 1.6s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes load { 0%{width:0} 80%{width:85%} 100%{width:100%} }
+</style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <h2>Djamalo</h2>
-            </div>
-            <div class="nav-menu">
-                <a href="#accueil" class="nav-link">Accueil</a>
-                <a href="#wahid" class="nav-link">WAHID</a>
-                <a href="#vision" class="nav-link">Vision</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section id="accueil" class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                Innovation Numérique <span class="highlight">Panafricaine</span>
-            </h1>
-            <p class="hero-subtitle">
-                Maison mère de <strong>WAHID</strong>, écosystème digital modulaire 
-                conçu pour l'Afrique et son développement économique.
-            </p>
-            <div class="hero-buttons">
-                <a href="#wahid" class="btn btn-primary">Découvrir WAHID</a>
-                <a href="#contact" class="btn btn-secondary">Nous Contacter</a>
-            </div>
-        </div>
-    </section>
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">DJAM<span>A</span>LO</div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+</div>
 
-    <!-- WAHID Platform Section -->
-    <section id="wahid" class="section wahid-section">
-        <div class="container">
-            <h2 class="section-title">Notre Projet Phare : <span class="highlight">WAHID Platform</span></h2>
-            <p class="section-subtitle">
-                Un écosystème numérique modulaire évoluant du transport urbain vers une suite ERP complète.
-            </p>
-            
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-icon">🚗</div>
-                    <h3>WAHID Transport</h3>
-                    <p>Solution de mobilité urbaine intelligente pour Abidjan et au-delà.</p>
-                    <div class="project-status">
-                        <span class="status-badge status-developing">En Développement</span>
-                    </div>
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ────────── NAVIGATION ────────── -->
+<nav id="nav">
+  <a href="#" class="nav-logo">DJAM<span class="nav-logo-dot">·</span>LO</a>
+  <div class="nav-links">
+    <a href="#domaines">Domaines</a>
+    <a href="#wahid">WAHID</a>
+    <a href="#vision-ci">Vision CI</a>
+    <a href="#fintech">Fintech</a>
+    <a href="#cta-final">Contact</a>
+  </div>
+  <a href="#wahid" class="nav-cta">Accéder à WAHID</a>
+  <div class="nav-burger" id="burger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ────────── HERO SLIDESHOW ────────── -->
+<section id="hero">
+  <div class="kente-border"></div>
+
+  <!-- SLIDE 1 — Abidjan, l'Afrique Digitale -->
+  <div class="slide active" data-index="0">
+    <div class="slide-bg s1-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="city-silhouette">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" fill="rgba(201,168,76,0.3)">
+        <rect x="60" y="280" width="40" height="120"/>
+        <rect x="110" y="240" width="50" height="160"/>
+        <rect x="170" y="180" width="60" height="220"/>
+        <rect x="240" y="220" width="35" height="180"/>
+        <rect x="285" y="140" width="80" height="260"/>
+        <rect x="375" y="100" width="90" height="300"/>
+        <rect x="375" y="80" width="10" height="30"/><!-- antenna -->
+        <rect x="475" y="160" width="55" height="240"/>
+        <rect x="540" y="200" width="40" height="200"/>
+        <rect x="590" y="250" width="70" height="150"/>
+        <rect x="670" y="230" width="45" height="170"/>
+        <rect x="725" y="270" width="55" height="130"/>
+        <!-- 4ème pont stylisé -->
+        <ellipse cx="400" cy="380" rx="200" ry="20" fill="rgba(201,168,76,0.15)"/>
+        <path d="M200,380 Q320,340 400,360 Q480,340 600,380" stroke="rgba(201,168,76,0.4)" stroke-width="3" fill="none"/>
+        <line x1="280" y1="380" x2="300" y2="345" stroke="rgba(201,168,76,0.3)" stroke-width="2"/>
+        <line x1="340" y1="380" x2="360" y2="340" stroke="rgba(201,168,76,0.3)" stroke-width="2"/>
+        <line x1="440" y1="380" x2="420" y2="340" stroke="rgba(201,168,76,0.3)" stroke-width="2"/>
+        <line x1="500" y1="380" x2="480" y2="345" stroke="rgba(201,168,76,0.3)" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="slide-content">
+      <div class="slide-tag"><div class="slide-tag-dot"></div>Abidjan · Côte d'Ivoire</div>
+      <h1 class="slide-title">
+        L'Afrique Digitale<br>
+        <span class="gold-word">commence ici.</span>
+      </h1>
+      <p class="slide-sub">
+        Groupe DJAMALO construit l'infrastructure numérique qu'attendait l'Afrique.<br>
+        <b>ERP. Fintech. IA.</b> Une plateforme. 54 pays.
+      </p>
+      <div class="slide-cta-group">
+        <a href="#domaines" class="btn-primary">Découvrir notre vision</a>
+        <a href="#wahid" class="btn-ghost">
+          WAHID Platform
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="slide-num">01</div>
+  </div>
+
+  <!-- SLIDE 2 — WAHID, l'app quotidienne -->
+  <div class="slide" data-index="1">
+    <div class="slide-bg s2-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="city-silhouette" style="opacity:.12">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Mobile banking illustration -->
+        <rect x="300" y="40" width="200" height="340" rx="24" fill="rgba(0,180,200,0.12)" stroke="rgba(0,180,200,0.2)" stroke-width="2"/>
+        <rect x="320" y="80" width="160" height="240" rx="8" fill="rgba(0,180,200,0.08)"/>
+        <rect x="340" y="120" width="120" height="12" rx="6" fill="rgba(201,168,76,0.3)"/>
+        <rect x="340" y="148" width="80" height="8" rx="4" fill="rgba(255,255,255,0.15)"/>
+        <rect x="340" y="180" width="120" height="40" rx="8" fill="rgba(201,168,76,0.1)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+        <rect x="340" y="235" width="120" height="40" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <!-- Signal rings -->
+        <circle cx="600" cy="120" r="40" fill="none" stroke="rgba(0,180,200,0.15)" stroke-width="1"/>
+        <circle cx="600" cy="120" r="70" fill="none" stroke="rgba(0,180,200,0.08)" stroke-width="1"/>
+        <circle cx="600" cy="120" r="100" fill="none" stroke="rgba(0,180,200,0.05)" stroke-width="1"/>
+        <circle cx="600" cy="120" r="8" fill="rgba(0,180,200,0.4)"/>
+      </svg>
+    </div>
+    <div class="slide-content">
+      <div class="slide-tag"><div class="slide-tag-dot"></div>WAHID — Mobile Banking First</div>
+      <h1 class="slide-title">
+        Votre app<br>
+        <strong>quotidienne.</strong><br>
+        <span class="gold-word">Business. Shopping.</span>
+      </h1>
+      <p class="slide-sub">
+        Transport, e-commerce, livraison, finances — <b>un seul compte.</b><br>
+        Conçu dès le premier jour pour les Ivoiriens. QR Code. GPS. Caméra.
+      </p>
+      <div class="slide-cta-group">
+        <a href="#wahid" class="btn-primary">Explorer WAHID</a>
+        <a href="#fintech" class="btn-ghost">
+          Architecture Fintech
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="slide-num">02</div>
+  </div>
+
+  <!-- SLIDE 3 — AgroTech / Vision CI 2030 -->
+  <div class="slide" data-index="2">
+    <div class="slide-bg s3-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="city-silhouette" style="opacity:.18">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Agropole illustration -->
+        <polygon points="200,350 400,120 600,350" fill="rgba(30,120,60,0.2)" stroke="rgba(30,120,60,0.3)" stroke-width="2"/>
+        <circle cx="400" cy="200" r="60" fill="rgba(30,120,60,0.15)" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
+        <circle cx="400" cy="200" r="30" fill="rgba(201,168,76,0.15)"/>
+        <!-- Network nodes -->
+        <circle cx="200" cy="180" r="12" fill="rgba(30,120,60,0.4)"/>
+        <circle cx="600" cy="160" r="12" fill="rgba(30,120,60,0.4)"/>
+        <circle cx="300" cy="280" r="12" fill="rgba(201,168,76,0.4)"/>
+        <circle cx="500" cy="270" r="12" fill="rgba(201,168,76,0.4)"/>
+        <line x1="400" y1="200" x2="200" y2="180" stroke="rgba(201,168,76,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="400" y1="200" x2="600" y2="160" stroke="rgba(201,168,76,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="400" y1="200" x2="300" y2="280" stroke="rgba(201,168,76,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="400" y1="200" x2="500" y2="270" stroke="rgba(201,168,76,0.25)" stroke-width="1.5" stroke-dasharray="4,4"/>
+      </svg>
+    </div>
+    <div class="slide-content">
+      <div class="slide-tag"><div class="slide-tag-dot"></div>AgroTech · Q3 2026</div>
+      <h1 class="slide-title">
+        <span class="gold-word">Agropole CI.</span><br>
+        <strong>DJAMALO</strong><br>
+        s'y aligne.
+      </h1>
+      <p class="slide-sub">
+        9 Agropoles planifiés, vision <b>Côte d'Ivoire 2030</b>.<br>
+        DJAMALO AgroTech digitalise la chaîne de valeur agricole de bout en bout.
+      </p>
+      <div class="slide-cta-group">
+        <a href="#domaines" class="btn-primary">Voir tous les domaines</a>
+        <a href="#vision-ci" class="btn-ghost">
+          Vision Côte d'Ivoire
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="slide-num">03</div>
+  </div>
+
+  <!-- SLIDE 4 — Fintech-Ready -->
+  <div class="slide" data-index="3">
+    <div class="slide-bg s4-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="slide-content">
+      <div class="slide-tag"><div class="slide-tag-dot"></div>Fintech-Ready · IA First</div>
+      <h1 class="slide-title">
+        <strong>Infrastructure</strong><br>
+        <span class="gold-word">financière</span><br>
+        de l'informel.
+      </h1>
+      <p class="slide-sub">
+        Split Payment. Wallets Business. KYC progressif. Micro-crédit IA.<br>
+        <b>65% des emplois ivoiriens sont informels.</b> DJAMALO les digitalise.
+      </p>
+      <div class="slide-cta-group">
+        <a href="#fintech" class="btn-primary">Architecture Fintech</a>
+      </div>
+    </div>
+    <div class="slide-num">04</div>
+  </div>
+
+  <!-- SLIDE 5 — Panafricain -->
+  <div class="slide" data-index="4">
+    <div class="slide-bg s5-bg"></div>
+    <div class="noise-overlay"></div>
+    <div class="city-silhouette" style="opacity:.2">
+      <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stylized Africa map -->
+        <path d="M400,30 C450,30 520,50 560,90 C600,130 620,170 600,220 C580,270 560,300 540,330 C520,360 500,380 480,380 C450,380 430,360 420,340 C410,320 400,300 390,280 C370,240 340,220 330,190 C320,160 340,130 360,100 C380,70 370,30 400,30 Z" fill="rgba(201,168,76,0.12)" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
+        <!-- Dots for countries -->
+        <circle cx="390" cy="180" r="5" fill="rgba(201,168,76,0.8)"/><!-- CI -->
+        <circle cx="380" cy="165" r="3" fill="rgba(201,168,76,0.5)"/><!-- SN -->
+        <circle cx="395" cy="170" r="3" fill="rgba(201,168,76,0.5)"/><!-- ML -->
+        <circle cx="410" cy="185" r="3" fill="rgba(201,168,76,0.5)"/><!-- GH -->
+        <circle cx="430" cy="185" r="3" fill="rgba(201,168,76,0.5)"/><!-- NG -->
+        <!-- Pulse on CI -->
+        <circle cx="390" cy="180" r="14" fill="none" stroke="rgba(201,168,76,0.25)" stroke-width="1">
+          <animate attributeName="r" values="8;18;8" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <text x="560" y="160" font-size="11" fill="rgba(201,168,76,0.5)" font-family="Plus Jakarta Sans">54 PAYS</text>
+      </svg>
+    </div>
+    <div class="slide-content">
+      <div class="slide-tag"><div class="slide-tag-dot"></div>Panafricain · CEDEAO & Au-delà</div>
+      <h1 class="slide-title">
+        <strong>54 pays.</strong><br>
+        <span class="gold-word">Une vision.</span><br>
+        Un écosystème.
+      </h1>
+      <p class="slide-sub">
+        CI → Sénégal → Mali → Ghana → Nigeria.<br>
+        L'architecture DJAMALO est conçue pour <b>chaque marché africain</b>.
+      </p>
+      <div class="slide-cta-group">
+        <a href="#cta-final" class="btn-primary">Rejoindre l'aventure</a>
+      </div>
+    </div>
+    <div class="slide-num">05</div>
+  </div>
+
+  <!-- Progress bars -->
+  <div id="hero-progress">
+    <div class="prog-item active" style="--dur:6s"><div class="prog-label"></div></div>
+    <div class="prog-item" style="--dur:6s"></div>
+    <div class="prog-item" style="--dur:6s"></div>
+    <div class="prog-item" style="--dur:6s"></div>
+    <div class="prog-item" style="--dur:6s"></div>
+  </div>
+</section>
+
+<!-- ────────── MARQUEE ────────── -->
+<div id="marquee-bar">
+  <div class="marquee-track" id="mq">
+    <div class="marquee-item">WAHID TRANSPORT <span class="marquee-sep"></span> LIVE NOW</div>
+    <div class="marquee-item">FINTECH-READY <span class="marquee-sep"></span> IA FIRST</div>
+    <div class="marquee-item">CÔTE D'IVOIRE <span class="marquee-sep"></span> PANAFRIQUE</div>
+    <div class="marquee-item">CORE ERP <span class="marquee-sep"></span> 54 PAYS</div>
+    <div class="marquee-item">AGROTECH <span class="marquee-sep"></span> Q3 2026</div>
+    <div class="marquee-item">MOBILE BANKING FIRST <span class="marquee-sep"></span> FLUTTER</div>
+    <div class="marquee-item">W3C DID <span class="marquee-sep"></span> IDENTITÉ UNIVERSELLE</div>
+    <div class="marquee-item">GROUPE DJAMALO <span class="marquee-sep"></span> ABIDJAN</div>
+    <!-- Duplicate for infinite -->
+    <div class="marquee-item">WAHID TRANSPORT <span class="marquee-sep"></span> LIVE NOW</div>
+    <div class="marquee-item">FINTECH-READY <span class="marquee-sep"></span> IA FIRST</div>
+    <div class="marquee-item">CÔTE D'IVOIRE <span class="marquee-sep"></span> PANAFRIQUE</div>
+    <div class="marquee-item">CORE ERP <span class="marquee-sep"></span> 54 PAYS</div>
+    <div class="marquee-item">AGROTECH <span class="marquee-sep"></span> Q3 2026</div>
+    <div class="marquee-item">MOBILE BANKING FIRST <span class="marquee-sep"></span> FLUTTER</div>
+    <div class="marquee-item">W3C DID <span class="marquee-sep"></span> IDENTITÉ UNIVERSELLE</div>
+    <div class="marquee-item">GROUPE DJAMALO <span class="marquee-sep"></span> ABIDJAN</div>
+  </div>
+</div>
+
+<!-- ────────── MANIFESTE ────────── -->
+<section id="manifeste" class="section adinkra-bg">
+  <div class="section-inner">
+    <div class="section-label reveal">Notre Mission</div>
+    <p class="manifeste-text reveal">
+      L'Afrique ne manque pas de <strong>talent.</strong> Elle manque d'<em class="gold-italic">infrastructure.</em>
+      Groupe DJAMALO construit le <strong>système nerveux digital</strong> de l'économie informelle africaine — des outils que les commerçants, les transporteurs, les agriculteurs et les entrepreneurs <strong>utiliseront vraiment</strong>, chaque jour.
+    </p>
+    <div class="manifeste-meta reveal">
+      <div class="meta-cell">
+        <div class="meta-num" data-target="65">0<sup>%</sup></div>
+        <div class="meta-label">des emplois ivoiriens sont dans l'économie informelle</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-num" data-target="7">0<sup>M</sup></div>
+        <div class="meta-label">emplois informels en Côte d'Ivoire à digitaliser</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-num" data-target="6" data-suffix=",5%">0</div>
+        <div class="meta-label">croissance PIB CI par an d'ici 2026 (FMI)</div>
+      </div>
+      <div class="meta-cell">
+        <div class="meta-num" data-target="54">0</div>
+        <div class="meta-label">pays africains. Notre marché potentiel.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────── DOMAINES DJAMALO ────────── -->
+<section id="domaines" class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">Groupe DJAMALO</div>
+    <h2 class="section-title reveal">
+      4 Domaines.<br><em>Une Afrique Nouvelle.</em>
+    </h2>
+    <p class="section-body reveal" style="margin-top:16px">
+      Chaque domaine est une verticale indépendante, propulsée par le même Core ERP et la même infrastructure Fintech-Ready.
+    </p>
+    <div class="domaines-grid">
+      <div class="domaine-card reveal">
+        <div class="domaine-num">01</div>
+        <div class="domaine-icon">📱</div>
+        <div class="domaine-name">WAHID Platform</div>
+        <span class="domaine-status status-live">● Live Now</span>
+        <p class="domaine-desc">
+          Super-app ERP multi-modulaire. Transport VIP, E-commerce, Livraison, Finance, CRM. L'app quotidienne des Ivoiriens — business, shopping, informel.
+        </p>
+        <div class="domaine-arrow">→</div>
+      </div>
+      <div class="domaine-card reveal" style="transition-delay:.1s">
+        <div class="domaine-num">02</div>
+        <div class="domaine-icon">🌱</div>
+        <div class="domaine-name">DJAMALO AgroTech</div>
+        <span class="domaine-status status-q3">Q3 2026</span>
+        <p class="domaine-desc">
+          Marketplace agricole B2B. Logistique intelligente. Prix en temps réel par IA. Aligné sur la vision Agropole 2030 du gouvernement ivoirien.
+        </p>
+        <div class="domaine-arrow">→</div>
+      </div>
+      <div class="domaine-card reveal" style="transition-delay:.2s">
+        <div class="domaine-num">03</div>
+        <div class="domaine-icon">✨</div>
+        <div class="domaine-name">Mode & Cosmétique</div>
+        <span class="domaine-status status-q4">Q4 2026</span>
+        <p class="domaine-desc">
+          E-commerce mode africaine et produits cosmétiques. Créateurs et artisans locaux. Distribution et logistique continentale.
+        </p>
+        <div class="domaine-arrow">→</div>
+      </div>
+      <div class="domaine-card reveal" style="transition-delay:.3s">
+        <div class="domaine-num">04</div>
+        <div class="domaine-icon">🌍</div>
+        <div class="domaine-name">Langues Africaines</div>
+        <span class="domaine-status status-2027">2027</span>
+        <p class="domaine-desc">
+          Digitalisation du patrimoine linguistique africain. Mandingue · Wolof · Bambara · Swahili · Yoruba. Apprentissage gamifié par IA conversationnelle.
+        </p>
+        <div class="domaine-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────── WAHID SPOTLIGHT ────────── -->
+<section id="wahid" class="section">
+  <div class="section-inner">
+    <div class="wahid-layout">
+      <div class="reveal-left">
+        <div class="wahid-badge"><div class="wahid-badge-dot"></div>WAHID Transport — Opérationnel</div>
+        <div class="section-label">Premier Module WAHID</div>
+        <h2 class="section-title">
+          L'app que<br><em>l'Ivoirien</em><br><strong>attendait.</strong>
+        </h2>
+        <div class="wahid-features">
+          <div class="feat-row">
+            <div class="feat-icon-box">🎫</div>
+            <div>
+              <h4>Tickets QR Digitaux</h4>
+              <p>Réservation en 2 minutes. PDF avec QR Code de vérification. Envoi WhatsApp, SMS, Email.</p>
+            </div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-icon-box">💳</div>
+            <div>
+              <h4>Paiement Mobile Money</h4>
+              <p>Orange Money, MTN, Wave, Moov. Split payment automatique. Commission 0,1%.</p>
+            </div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-icon-box">⭐</div>
+            <div>
+              <h4>Certification Qualité WAHID</h4>
+              <p>Bronze → Platine. Notes multi-critères. Suspension automatique si standards non respectés.</p>
+            </div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-icon-box">🔒</div>
+            <div>
+              <h4>Garantie Remboursement</h4>
+              <p>WAHID garantit chaque transaction. Immédiat, sans condition pour le voyageur.</p>
+            </div>
+          </div>
+          <div class="feat-row">
+            <div class="feat-icon-box">🗣️</div>
+            <div>
+              <h4>Chat Vocal Intégré</h4>
+              <p>Messages vocaux pour les non-lettrés. Transcription automatique. Accessible à tous.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap reveal-right">
+        <div class="phone-glow"></div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="phone-status">
+              <span class="phone-time">09:41</span>
+              <span class="phone-icons">●●● 🔋</span>
+            </div>
+            <div class="app-header-bar">
+              <span class="app-name">WAHID</span>
+              <div class="app-avatar">KD</div>
+            </div>
+            <div class="app-search">
+              <span>🔍</span>
+              <span>Abidjan → Yamoussoukro</span>
+            </div>
+            <div class="app-scroll">
+              <div style="font-size:10px;color:rgba(245,237,216,.3);padding:4px 4px 8px;letter-spacing:2px;font-weight:700">3 RÉSULTATS · 26 MARS</div>
+              <div class="trip-tile">
+                <div class="trip-row1">
+                  <span class="trip-company">UTB VIP <span class="cert-badge">OR</span></span>
+                  <span class="trip-price">5 000 F</span>
                 </div>
-
-                <div class="project-card">
-                    <div class="project-icon">🏪</div>
-                    <h3>WAHID Commerce</h3>
-                    <p>Plateforme de gestion d'entreprise et e-commerce intégrée.</p>
-                    <div class="project-status">
-                        <span class="status-badge status-planning">En Conception</span>
-                    </div>
+                <div class="trip-row2">
+                  <span class="trip-route">08:00 → 10:30 · 5 places</span>
+                  <span class="trip-stars">★ 4.8</span>
                 </div>
-
-                <div class="project-card">
-                    <div class="project-icon">📑</div>
-                    <h3>WAHID Appels d'Offres</h3>
-                    <p>Marketplace de consultations et soumissions pour professionnels.</p>
-                    <div class="project-status">
-                        <span class="status-badge status-planning">En Planification</span>
-                    </div>
+              </div>
+              <div class="trip-tile">
+                <div class="trip-row1">
+                  <span class="trip-company">TSR Express <span class="cert-badge">ARGENT</span></span>
+                  <span class="trip-price">4 500 F</span>
                 </div>
+                <div class="trip-row2">
+                  <span class="trip-route">10:00 → 12:15 · 12 places</span>
+                  <span class="trip-stars">★ 4.7</span>
+                </div>
+              </div>
+              <div class="trip-tile">
+                <div class="trip-row1">
+                  <span class="trip-company">CIV Voyages</span>
+                  <span class="trip-price">5 500 F</span>
+                </div>
+                <div class="trip-row2">
+                  <span class="trip-route">14:00 → 16:30 · 20 places</span>
+                  <span class="trip-stars">★ 4.3</span>
+                </div>
+              </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Vision Section -->
-    <section id="vision" class="section vision-section">
-        <div class="container">
-            <h2 class="section-title">Notre <span class="highlight">Vision</span></h2>
-            <div class="vision-content">
-                <div class="vision-text">
-                    <p>
-                        Chez <strong>Djamalo</strong>, nous croyons en une Afrique numérique souveraine, 
-                        innovante et inclusive. Notre mission est de construire l'écosystème numérique 
-                        le plus complet du continent, en commençant par des services essentiels et 
-                        en nous étendant progressivement à tous les secteurs économiques.
-                    </p>
-                    
-                    <div class="values-grid">
-                        <div class="value-item">
-                            <span class="value-icon">🔗</span>
-                            <h4>Modularité</h4>
-                            <p>Architecture évolutive et interopérable</p>
-                        </div>
-                        <div class="value-item">
-                            <span class="value-icon">🌍</span>
-                            <h4>Inclusion</h4>
-                            <p>Accessible à tous, multilingue, offline-first</p>
-                        </div>
-                        <div class="value-item">
-                            <span class="value-icon">🚀</span>
-                            <h4>Innovation</h4>
-                            <p>IA intégrée, blockchain, technologies émergentes</p>
-                        </div>
-                        <div class="value-item">
-                            <span class="value-icon">💡</span>
-                            <h4>Intelligence</h4>
-                            <p>Solutions intelligentes et automatisées</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="pay-row">
+              <span class="pay-check">✓</span>
+              <span class="pay-text">Paiement Orange Money · Remboursement garanti</span>
             </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="section contact-section">
-        <div class="container">
-            <h2 class="section-title">Contact</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <span class="contact-icon">📧</span>
-                        <div>
-                            <h4>Email</h4>
-                            <p>contact@djamalo.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon">🌐</span>
-                        <div>
-                            <h4>Site Web</h4>
-                            <p>djamalo.com</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon">🚀</span>
-                        <div>
-                            <h4>Plateforme</h4>
-                            <p>wahid.djamalo.com</p>
-                        </div>
-                    </div>
-                </div>
+<!-- ────────── VISION CÔTE D'IVOIRE ────────── -->
+<section id="vision-ci" class="section">
+  <div id="vision-parallax"></div>
+  <div class="section-inner">
+    <div class="vision-layout">
+      <div class="reveal-left">
+        <div class="section-label">Côte d'Ivoire · 2025-2030</div>
+        <h2 class="section-title">
+          Un pays en<br><em>pleine</em><br><strong>transformation.</strong>
+        </h2>
+        <p class="section-body" style="margin-top:20px">
+          Le dynamisme ivoirien est sans précédent. DJAMALO s'inscrit dans cette dynamique — non pas en observateur, mais comme <strong>accélérateur de la transformation digitale.</strong>
+        </p>
+        <div class="ci-stat-grid">
+          <div class="ci-stat-box">
+            <div class="ci-stat-n">6,5%</div>
+            <div class="ci-stat-l">Croissance PIB annuelle projetée</div>
+          </div>
+          <div class="ci-stat-box">
+            <div class="ci-stat-n">$237B</div>
+            <div class="ci-stat-l">PIB projeté en 2043 (8ème Afrique)</div>
+          </div>
+          <div class="ci-stat-box">
+            <div class="ci-stat-n">9</div>
+            <div class="ci-stat-l">Agropoles planifiés d'ici 2030</div>
+          </div>
+          <div class="ci-stat-box">
+            <div class="ci-stat-n">7M</div>
+            <div class="ci-stat-l">Emplois informels urbains</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal-right">
+        <div class="ci-cards">
+          <div class="ci-card">
+            <div class="ci-icon">🌉</div>
+            <div>
+              <div class="ci-title">4ème Pont & Réseau Express d'Abidjan</div>
+              <div class="ci-text">88 km d'autoroutes express, 89 carrefours rénovés. Abidjan en mutation rapide — DJAMALO Transport s'y inscrit directement.</div>
+              <div class="ci-tag">Alignement → WAHID Transport · VTC</div>
             </div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-icon">🌾</div>
+            <div>
+              <div class="ci-title">Agropoles & Vision Agricole 2030</div>
+              <div class="ci-text">9 pôles agro-industriels couvrant tout le territoire. Objectif : souveraineté alimentaire totale. DJAMALO AgroTech digitalise la chaîne complète.</div>
+              <div class="ci-tag">Alignement → DJAMALO AgroTech</div>
+            </div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-icon">🤖</div>
+            <div>
+              <div class="ci-title">Stratégie IA & Digitalisation du Gouvernement</div>
+              <div class="ci-text">Vision IA gouvernementale, impôts électroniques, e-identité. DJAMALO anticipe l'intégration API gouvernementale dès son architecture.</div>
+              <div class="ci-tag">Alignement → Couche Identité UIA · Gov API</div>
+            </div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-icon">📱</div>
+            <div>
+              <div class="ci-title">82% d'inclusion financière mobile en CI</div>
+              <div class="ci-text">Orange Money, MTN, Wave — le mobile money est déjà dans la main de tout Ivoirien. DJAMALO construit par-dessus cette fondation.</div>
+              <div class="ci-tag">Alignement → Couche Fintech · Intégrations</div>
+            </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Djamalo. Tous droits réservés.</p>
-            <p>Innovation Numérique Panafricaine</p>
-        </div>
-    </footer>
+<!-- ────────── ARCHITECTURE FINTECH ────────── -->
+<section id="fintech" class="section kente">
+  <div class="section-inner">
+    <div class="section-label reveal">Architecture</div>
+    <h2 class="section-title reveal">
+      <em>Fintech-Ready.</em><br><strong>Construit</strong> pour durer.
+    </h2>
+    <div class="arch-diagram reveal">
+      <div class="arch-layer-label">Services Métier</div>
+      <div class="arch-row arch-row-4">
+        <div class="arch-cell"><div class="arch-icon">🚌</div><div class="arch-name">Transport VIP</div><div class="arch-desc">Réservation · QR · Compagnies</div></div>
+        <div class="arch-cell"><div class="arch-icon">🛒</div><div class="arch-name">E-commerce</div><div class="arch-desc">Catalogue · Commandes · CRM</div></div>
+        <div class="arch-cell"><div class="arch-icon">🏍️</div><div class="arch-name">Livraison</div><div class="arch-desc">GPS temps réel · Pool livreurs</div></div>
+        <div class="arch-cell"><div class="arch-icon">📊</div><div class="arch-name">Finance / CRM</div><div class="arch-desc">Comptabilité · Reporting</div></div>
+      </div>
+      <div class="arch-layer-label">Couche Financière Core</div>
+      <div class="arch-row arch-row-5">
+        <div class="arch-cell arch-gold"><div class="arch-icon">👛</div><div class="arch-name">Wallet</div><div class="arch-desc">Comptes virtuels</div></div>
+        <div class="arch-cell arch-gold"><div class="arch-icon">⚡</div><div class="arch-name">Transaction Engine</div><div class="arch-desc">ACID, temps réel</div></div>
+        <div class="arch-cell arch-gold"><div class="arch-icon">🔀</div><div class="arch-name">Split Payment</div><div class="arch-desc">Ventilation auto</div></div>
+        <div class="arch-cell arch-gold"><div class="arch-icon">📈</div><div class="arch-name">Commission 0,1%</div><div class="arch-desc">Progressif 0→0,3%</div></div>
+        <div class="arch-cell arch-gold"><div class="arch-icon">📋</div><div class="arch-name">Accounting</div><div class="arch-desc">Fiscalité auto</div></div>
+      </div>
+      <div class="arch-layer-label">Identité Universelle · W3C DID</div>
+      <div class="arch-row arch-row-4">
+        <div class="arch-cell"><div class="arch-icon">🪪</div><div class="arch-name">User Management</div><div class="arch-desc">did:wahid:ci:{id}</div></div>
+        <div class="arch-cell"><div class="arch-icon">🔍</div><div class="arch-name">KYC 0 → 5</div><div class="arch-desc">Progressif · Fraud IA</div></div>
+        <div class="arch-cell"><div class="arch-icon">🏢</div><div class="arch-name">Business Accounts</div><div class="arch-desc">PME · Compagnies</div></div>
+        <div class="arch-cell"><div class="arch-icon">🛡️</div><div class="arch-name">Audit Logs</div><div class="arch-desc">Immuables 7 ans</div></div>
+      </div>
+      <div class="arch-layer-label">Intégrations</div>
+      <div class="arch-row arch-row-4">
+        <div class="arch-cell"><div class="arch-icon">💸</div><div class="arch-name">CinetPay</div><div class="arch-desc">Phase 1 · CEDEAO</div></div>
+        <div class="arch-cell"><div class="arch-icon">📲</div><div class="arch-name">Orange · MTN · Wave</div><div class="arch-desc">Phase 2 · Direct -70%</div></div>
+        <div class="arch-cell"><div class="arch-icon">💬</div><div class="arch-name">SMS Multi-Providers</div><div class="arch-desc">Fallback auto</div></div>
+        <div class="arch-cell"><div class="arch-icon">🏛️</div><div class="arch-name">Gov APIs</div><div class="arch-desc">Impôts · CNPS · eCI</div></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- ────────── STACK TECH ────────── -->
+<section id="tech" class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">Stack Technique</div>
+    <h2 class="section-title reveal">
+      <strong>Construit pour</strong><br><em>l'échelle africaine.</em>
+    </h2>
+    <div class="tech-grid reveal">
+      <div class="tech-cell"><div class="tech-emoji">⚡</div><div class="tech-name">FastAPI</div><div class="tech-role">Backend Core</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🐘</div><div class="tech-name">PostgreSQL</div><div class="tech-role">ACID Transactions</div></div>
+      <div class="tech-cell"><div class="tech-emoji">📱</div><div class="tech-name">Flutter</div><div class="tech-role">iOS · Android · Web</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🔴</div><div class="tech-name">Redis</div><div class="tech-role">Cache · Sessions</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🌿</div><div class="tech-name">Celery</div><div class="tech-role">Tâches Async</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🔐</div><div class="tech-name">W3C DID</div><div class="tech-role">Identité Universelle</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🤖</div><div class="tech-name">IA First</div><div class="tech-role">Architecture Core</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🗺️</div><div class="tech-name">Mapbox</div><div class="tech-role">GPS · Livraison</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🛡️</div><div class="tech-name">Argon2id</div><div class="tech-role">Sécurité Bancaire</div></div>
+      <div class="tech-cell"><div class="tech-emoji">🚀</div><div class="tech-name">Render → Hetzner</div><div class="tech-role">MVP → Scale CI</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────── CTA FINAL ────────── -->
+<section id="cta-final" class="section" style="padding:0">
+  <div id="cta-final" style="position:relative;padding:160px 48px;text-align:center;overflow:hidden;background:var(--navy-2);border-top:1px solid var(--line)">
+    <div class="noise-overlay"></div>
+    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:80px;background:linear-gradient(var(--gold),transparent)"></div>
+    <div style="position:relative;z-index:2">
+      <div class="section-label reveal" style="justify-content:center">Groupe DJAMALO</div>
+      <h2 class="cta-title reveal">
+        L'Afrique n'attend<br>plus <em>personne.</em>
+      </h2>
+      <p class="cta-sub reveal">
+        Rejoignez l'écosystème DJAMALO — en tant que partenaire, compagnie transport, vendeur ou investisseur.
+      </p>
+      <div class="cta-cluster reveal">
+        <a href="mailto:contact@djamalo.com" class="btn-primary">Nous Contacter</a>
+        <a href="#wahid" class="btn-ghost" style="color:var(--gold)">
+          Découvrir WAHID
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="cta-divider"></div>
+  </div>
+</section>
+
+<!-- ────────── FOOTER ────────── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo-foot">DJAM<span>A</span>LO</div>
+      <p>Groupe DJAMALO — Plateforme Panafricaine, Core ERP, IA First. Abidjan, Côte d'Ivoire 🇨🇮</p>
+      <div style="margin-top:24px;font-size:12px;color:var(--text-faint);letter-spacing:.5px">
+        contact@djamalo.com
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Groupe</h5>
+      <a href="#">Vision</a>
+      <a href="#">Notre Mission</a>
+      <a href="#">Équipe</a>
+      <a href="#">Partenaires</a>
+      <a href="#">Investisseurs</a>
+    </div>
+    <div class="footer-col">
+      <h5>Domaines</h5>
+      <a href="#">WAHID Platform</a>
+      <a href="#">DJAMALO AgroTech</a>
+      <a href="#">Mode & Cosmétique</a>
+      <a href="#">Langues Africaines</a>
+    </div>
+    <div class="footer-col">
+      <h5>Ressources</h5>
+      <a href="#">WAHID Transport</a>
+      <a href="#">Documentation API</a>
+      <a href="#">Partenaires Compagnies</a>
+      <a href="#">Vendeurs</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Groupe DJAMALO. Tous droits réservés.</div>
+    <div class="footer-flag">🇨🇮</div>
+    <div class="footer-copy" style="font-style:italic;color:var(--gold-dk)">Plateforme Panafricaine, Core ERP, IA First.</div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+/* ── LOADER ── */
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('done'), 1800);
+});
+
+/* ── CURSOR ── */
+const cur = document.getElementById('cursor');
+const curRing = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  curRing.style.left = rx + 'px'; curRing.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a, button, [class*="card"], [class*="cell"], [class*="btn"]').forEach(el => {
+  el.addEventListener('mouseenter', () => { curRing.style.width = '60px'; curRing.style.height = '60px'; curRing.style.borderColor = 'rgba(201,168,76,.8)'; });
+  el.addEventListener('mouseleave', () => { curRing.style.width = '36px'; curRing.style.height = '36px'; curRing.style.borderColor = 'rgba(201,168,76,.5)'; });
+});
+
+/* ── NAV SCROLL ── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 60) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+/* ── HERO SLIDESHOW ── */
+const slides = document.querySelectorAll('.slide');
+const progs  = document.querySelectorAll('.prog-item');
+let cur_slide = 0, timer = null;
+const DURATION = 6000;
+function goTo(n) {
+  slides[cur_slide].classList.remove('active');
+  progs[cur_slide].classList.remove('active');
+  // restart animation
+  progs[cur_slide].style.animation = 'none';
+  progs[cur_slide].offsetHeight; // reflow
+  progs[n].style.animation = 'none';
+  progs[n].offsetHeight;
+  cur_slide = n;
+  slides[cur_slide].classList.add('active');
+  progs[cur_slide].classList.add('active');
+}
+function nextSlide() { goTo((cur_slide + 1) % slides.length); }
+function startTimer() { timer = setInterval(nextSlide, DURATION); }
+progs.forEach((p, i) => p.addEventListener('click', () => { clearInterval(timer); goTo(i); startTimer(); }));
+startTimer();
+
+/* ── PARALLAX ── */
+const parallaxEl = document.getElementById('vision-parallax');
+window.addEventListener('scroll', () => {
+  if (!parallaxEl) return;
+  const rect = parallaxEl.parentElement.getBoundingClientRect();
+  const prog = 1 - (rect.top + rect.height) / (window.innerHeight + rect.height);
+  parallaxEl.style.transform = `translateY(${prog * 60 - 30}px)`;
+}, { passive: true });
+
+/* ── SCROLL REVEAL ── */
+const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => io.observe(el));
+
+/* ── COUNTER ANIMATION ── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const sup = el.querySelector('sup');
+  const supText = sup ? sup.outerHTML : '';
+  let start = 0, duration = 1800;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const val = Math.round(eased * target);
+    el.innerHTML = val + suffix + supText;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+const counterIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); counterIo.unobserve(e.target); } });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => counterIo.observe(el));
+
+/* ── MOBILE MENU ── */
+function toggleMenu() { document.getElementById('nav').classList.toggle('menu-open'); }
+</script>
 </body>
 </html>
